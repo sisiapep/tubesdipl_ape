@@ -40,9 +40,27 @@ untuk membuat tampilan website disini kita menggunakan HTML, CSS, Dan Bootstrap.
                </form>
 ```
 # Membuat Fungsionalitas Website(BackEnd)
+### Model Login
+Model Login Berfungsi untuk melakukan deklarasi table yang akan dipakai dan atribut apa yang diizinkan untuk dipakai pada login
+```PHP
+class User extends Authenticatable
+{
+    use Notifiable;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+	protected $table = 'users';
+    protected $fillable = [
+        'name', 'username', 'password',
+    ];
+
+}
+```
 ### Controller Login
 Dalam Controller login ini terdapat beberapa function yang dibuat agar fungsionalitas pada login berjalan semestinya.
-### Function Login
+#### Function Login
 Berikut code lengkap untuk Function login yang telah dibuat dimana function login ini dibuat untuk melakukan redirect kedalam tampilan menu login dan melakukan pengecekan dia sudah login atau belum.
 ```PHP
 public function login(){
@@ -59,4 +77,62 @@ Fungsi dibawah berfungsi untuk menyimpan session $a dalam session test dan melak
 ```PHP
 Session::put('tes',$a);
   return view('admin.login');
+```
+#### Function loginPost
+Function Login Post berfungsi untuk melakukan fungsionalitas login, dimana disini memvalidasi apakah user dan yang dimasukan itu valid atau tidak, apabila valid maka akan melakukan redirect ke halaman admin, apabila gagal maka akan memberikan alert
+```PHP
+public function loginPost(Request $request){
+
+        $username = $request->username;
+        $password = $request->password;
+
+        $data = User::where('username',$username)->first();
+        if($data){
+            if(Hash::check($password,$data->password)){
+                Session::put('name',$data->name);
+                Session::put('username',$data->username);
+                Session::put('login',"1");
+                return redirect(url('admin-produk'));
+            }
+            else{
+                return redirect(url('login'))->with('alert','Password atau Email, Salah !');
+            }
+        }
+        else{
+            return redirect(url('login'))->with('alert','Password atau Email, Salah!');
+        }
+}
+```
+Code dibawah berfungsi untuk melakukan pengambilan value dari form yang telah diisi
+```PHP
+$username = $request->username;
+$password = $request->password;
+```
+Code Dibawah berfungsi untuk mengecek kedalam database apakah user terdapat pada database atau tidak
+```PHP
+$data = User::where('username',$username)->first();
+```
+Code dibawah akan berjalan apabila password yang dimasukan oleh user sesuai dengan password yang ada pada database yang telah di simpah dalam variabel ```$data``` apabila benar maka akan dilakukan redirect kedalam halaman admin
+```PHP
+if(Hash::check($password,$data->password)){
+	Session::put('name',$data->name);
+	Session::put('username',$data->username);
+	Session::put('login',"1");
+	return redirect(url('admin-produk'));
+ }
+```
+Code Dibawah akan berjalan apabila username atau password yang dimasukan tidak terdapat dalam database(salah)
+```php
+else{
+	return redirect(url('login'))->with('alert','Password atau Email, Salah !');
+}
+```
+#### Function logout
+Pada function logout ini berfungsi untuk melakukan logout dimana apabila melakukan logout akan di redirect ke menu login kembali dan akan dilakukan penghapusan pada session.
+
+```php
+public function logout(){
+	Session::flush();
+	return redirect(url('login'))->with('alert','Kamu sudah logout');
+}
 ```
