@@ -1,6 +1,6 @@
-# Membuat Tampilan Website
+# Membuat Tampilan Website(FrontEnd)
 untuk membuat tampilan website disini kita menggunakan HTML, CSS, Dan Bootstrap.
-### Melakukan Import Library dan Css code yang digunakan
+#### Melakukan Import Library dan Css code yang digunakan
 ```HTML
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -19,17 +19,8 @@ untuk membuat tampilan website disini kita menggunakan HTML, CSS, Dan Bootstrap.
 
 ```
 
-### membuat tampilan pada form login 
+#### membuat tampilan pada form login 
 ```HTML
-<div class="login-main-text">
-            <h2>Temukan Event Keinginanmu<br> <strong></strong></h2>
-            <p>Join bersama kami untuk wujudkan event mu. </p>
-         </div>
-      </div>
-      <div class="main">
-	 
-         <div class="col-md-6 col-sm-12">
-            <div class="login-form">
                <form method="post" action ="{{url('doLogin')}}">
 			    @if (session('alert'))
 				<div class="alert alert-danger">
@@ -47,7 +38,25 @@ untuk membuat tampilan website disini kita menggunakan HTML, CSS, Dan Bootstrap.
                   </div>
                   <button type="submit" class="btn btn-black">Login</button>
                </form>
-            </div>
-         </div>
-      </div>
+```
+# Membuat Fungsionalitas Website(BackEnd)
+### Controller Login
+Dalam Controller login ini terdapat beberapa function yang dibuat agar fungsionalitas pada login berjalan semestinya.
+### Function Login
+Berikut code lengkap untuk Function login yang telah dibuat dimana function login ini dibuat untuk melakukan redirect kedalam tampilan menu login dan melakukan pengecekan dia sudah login atau belum.
+```PHP
+public function login(){
+	$a = Hash::make('admin');
+	Session::put('tes',$a);
+  	return view('admin.login');
+}
+```
+Fungsi dari code dibawah adalah untuk melakukan Hashing terhadap admin
+```PHP
+$a = Hash::make('admin');
+```
+Fungsi dibawah berfungsi untuk menyimpan session $a dalam session test dan melakukan redirect kedalam menu login admin
+```PHP
+Session::put('tes',$a);
+  return view('admin.login');
 ```
