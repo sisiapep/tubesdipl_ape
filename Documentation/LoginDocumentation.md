@@ -63,6 +63,10 @@ Dalam Controller login ini terdapat beberapa function yang dibuat agar fungsiona
 #### Function Login
 Berikut code lengkap untuk Function login yang telah dibuat dimana function login ini dibuat untuk melakukan redirect kedalam tampilan menu login dan melakukan pengecekan dia sudah login atau belum.
 ```PHP
+/**
+* Login. Dapat melakukan redirect ke login page dan melakukan pengecekan login atau belum.
+* @var array
+*/
 public function login(){
 	$a = Hash::make('admin');
 	Session::put('tes',$a);
