@@ -161,7 +161,7 @@ setelah selesai akan melakukan return ke halaman produk dengan menampilkan alert
 return redirect(url('admin-produk'))->with('status','Data Produk Berhasil Ditambahkan');
 ```
 #### Function edit
-
+Function edit berfungsi untuk melakukan direct kedalam halaman edit produk
 ```php
 	public function edit(Request $request,Produk $produks)
 	{
@@ -173,4 +173,135 @@ return redirect(url('admin-produk'))->with('status','Data Produk Berhasil Ditamb
 			return view('admin.produkTambah', compact('produks'))->with('form','Edit');
 		}
 	}
+```
+Code dibawah berfungsi untuk melakukan validasi apakah user telah login atau belum, apabila belum login maka akan di redirect kedalam menu login dan akan diberikan alert
+```php
+if (session('login') != '1'){
+  return redirect(url('login'))->with('alert','Anda belum login, silahkan login terlebih dahulu');
+}
+```
+code dibawah berfungsi untuk menyimpan session cek dan untuk melakukan direct kedalam halaman produk tambah untuk dilakukan edit.
+```php
+else{
+	$request->session()->put('cek','Edit');
+	return view('admin.produkTambah', compact('produks'))->with('form','Edit');
+}
+```
+#### Function update
+Function Update berfungsi untuk melakukan validasi sebelum melakukan update pada data yang telah ada
+```php
+public function update (Request $request, Produk $produks)
+	{
+		if (session('login') != '1'){
+			return redirect(url('login'))->with('alert','Anda belum login, silahkan login terlebih dahulu');
+		}
+		else{
+		$request->validate([
+				'nama_produk' => 'required',
+				'harga_produk'=> 'required|numeric',
+				'id_kategori'=> 'required',
+				'des_produk'=> 'required',
+				'file' => 'file|image|mimes:jpeg,png,jpg|max:2048'
+		]);
+		if ($request->file == null){
+			Produk::where('id', $produks->id)
+				->update([
+				'nama_produk' => $request->nama_produk,
+				'harga_produk' => $request->harga_produk,
+				'id_kategori' => $request->id_kategori,
+				'des_produk' => $request->des_produk,
+				]);
+		}
+		else{
+		$file = $request->file('file');
+		$nama_file = time().$request->file->extension();
+		Produk::where('id', $produks->id)
+				->update([
+				'nama_produk' => $request->nama_produk,
+				'harga_produk' => $request->harga_produk,
+				'id_kategori' => $request->id_kategori,
+				'des_produk' => $request->des_produk,
+				'gambar' => $nama_file
+				]);
+		$file->move(public_path('uploads'),$nama_file);
+		}
+		return redirect(url('admin-produk'))->with('status','Data Produk Berhasil Diganti');
+		}
+}
+```
+Code dibawah berfungsi untuk melakukan validasi apakah user telah login atau belum, apabila belum login maka akan di redirect kedalam menu login dan akan diberikan alert
+```php
+if (session('login') != '1'){
+  return redirect(url('login'))->with('alert','Anda belum login, silahkan login terlebih dahulu');
+}
+```
+Code dibawah berfungsi untuk melakukan validasi terhadap input produk
+```php
+else{
+		$request->validate([
+				'nama_produk' => 'required',
+				'harga_produk'=> 'required|numeric',
+				'id_kategori'=> 'required',
+				'des_produk'=> 'required',
+				'file' => 'file|image|mimes:jpeg,png,jpg|max:2048'
+]);
+```
+code dibawah dapat berjalan apabila request file bernilai nul, lalu dalam code ini akan dilakukan pencarian pada database berdasarkan id user dan disimpan pada produk untuk dilakukan update
+```php
+if ($request->file == null){
+			Produk::where('id', $produks->id)
+				->update([
+				'nama_produk' => $request->nama_produk,
+				'harga_produk' => $request->harga_produk,
+				'id_kategori' => $request->id_kategori,
+				'des_produk' => $request->des_produk,
+				]);
+}
+```
+code ini akan berjalan apabila file request tidak bernilai null perintah yang dilakukan sama seperti diatas yang membedakan adalah terdapat entitas gambar
+```php
+else{
+		$file = $request->file('file');
+		$nama_file = time().$request->file->extension();
+		Produk::where('id', $produks->id)
+				->update([
+				'nama_produk' => $request->nama_produk,
+				'harga_produk' => $request->harga_produk,
+				'id_kategori' => $request->id_kategori,
+				'des_produk' => $request->des_produk,
+				'gambar' => $nama_file
+				]);
+		$file->move(public_path('uploads'),$nama_file);
+}
+```
+melakukan redirect kedalam halaman admin produk dan memberikan alert data produk berhasil diganti
+```php
+return redirect(url('admin-produk'))->with('status','Data Produk Berhasil Diganti');
+```
+#### Function destroy
+Pada Destroyer ini berfungsi untuk melakukan delete data
+```php
+public function destroy(Produk $produks)
+	{
+		if (session('login') != '1'){
+			return redirect(url('login'))->with('alert','Anda belum login, silahkan login terlebih dahulu');
+		}
+		else{
+		Produk::destroy($produks->id);
+		return redirect(url('admin-produk'))->with('status','Data Produk Berhasil Dihapus');
+		}
+	}
+```
+Code dibawah berfungsi untuk melakukan validasi apakah user telah login atau belum, apabila belum login maka akan di redirect kedalam menu login dan akan diberikan alert
+```php
+if (session('login') != '1'){
+  return redirect(url('login'))->with('alert','Anda belum login, silahkan login terlebih dahulu');
+}
+```
+pada code ini berfungsi untuk melakukan delete data pada databse dengan menggunakan fungsi destroy
+```php
+else{
+		Produk::destroy($produks->id);
+		return redirect(url('admin-produk'))->with('status','Data Produk Berhasil Dihapus');
+}
 ```
